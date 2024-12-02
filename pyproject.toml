@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "visao-argus-liaa-ufba-br"
+version = "0.1.0"
+description = "The vision module will use the MQTT protocol for message exchange. Its primary function is to detect people and weapons, as well as to identify registered individuals in images provided via a URL."
+authors = ["Alvaro Oliveira <alvaro.oliveira@ufba.br>","Iarley Moraes <iarleymoraes21@gmail.com>","Jorge Batista <jorgebatista@ufba.br>","Marcos Silva	<marcosass@ufba.br>","Marcus Freire <marcus.elias@ufba.br>","Matheus Guimarães <guimaraes.matheus@ufba.br>"]
+license = "Proprietary"
+readme = "README.md"
+packages = [{include = "vision"}]
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+requests = "^2.32.2"
+ultralytics = "^8.2.19"
+paho-mqtt = "^2.1.0"
+gdown = "^5.2.0"
+torch = "^2.3.0"
+notebook = "^7.2.0"
+python-dotenv = "^1.0.1"
+deepface = "^0.0.91"
+retina-face = "^0.0.17"
+validators = "^0.28.3"
+tensorflow-intel  = {version = "^2.16.1", platform = "win32"}
+tensorflow = "^2.16.1"
+tf-keras = "^2.16.0"
+ipykernel = "^6.29.4"
+types-pyyaml = "^6.0.12.20240311"
+
+[tool.poetry.dependencies.tensorflow-io-gcs-filesystem]
+version = "0.31.0"
+platform = "win32"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.2.0"
+mypy = "^1.10.0"
+pytest = "^8.2.0"
+commitizen = "^3.25.0"
+pdoc = "^14.4.0"
+pytest-mock = "^3.14.0"
+pytest-cov = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+ignore_missing_imports = false
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+strict_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+check_untyped_defs = true
+warn_unreachable = true

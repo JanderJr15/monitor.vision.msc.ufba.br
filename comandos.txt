@@ -1,0 +1,11 @@
+# Construir a imagem Docker
+docker build -t vision_listener .
+
+# Executar o contêiner montados e manter em execução
+docker run -d --name vision-container vision_listener
+
+# Iniciar contêiner
+docker start vision-container
+
+# Para realizar teste e Acessar o contêiner
+docker exec -it vision-container bash
