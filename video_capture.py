@@ -400,9 +400,8 @@ start_http_server(8000)
 
 stream = Stream("my_camera", size=(640, 480), quality=50, fps=1)
 
-# server = MjpegServer("localhost", 8080)
-# server = MjpegServer("localhost", 8080)
-server = MjpegServer(MQTT_HOST, 8080)
+server = MjpegServer("localhost", 8080)
+# server = MjpegServer(MQTT_HOST, 8080)
 
 server.add_stream(stream)
 server.start()
@@ -425,8 +424,8 @@ def capture_frames_from_stream(url: str):
     Yields:
         np.ndarray: Quadros capturados como arrays NumPy.
     """
-    # cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
+    # cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print(f"Erro ao abrir o stream: {url}")
