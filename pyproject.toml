@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "visao-argus-liaa-ufba-br"
+name = "monitor-argus-liaa-ufba-br"
 version = "0.1.0"
 description = "The vision module will use the MQTT protocol for message exchange. Its primary function is to detect people and weapons, as well as to identify registered individuals in images provided via a URL."
 authors = ["Alvaro Oliveira <alvaro.oliveira@ufba.br>","Iarley Moraes <iarleymoraes21@gmail.com>","Jorge Batista <jorgebatista@ufba.br>","Marcos Silva	<marcosass@ufba.br>","Marcus Freire <marcus.elias@ufba.br>","Matheus Guimarães <guimaraes.matheus@ufba.br>"]
@@ -24,6 +24,7 @@ tensorflow = "^2.16.1"
 tf-keras = "^2.16.0"
 ipykernel = "^6.29.4"
 types-pyyaml = "^6.0.12.20240311"
+mjpeg-streamer = "^2024.2.8"
 
 [tool.poetry.dependencies.tensorflow-io-gcs-filesystem]
 version = "0.31.0"
