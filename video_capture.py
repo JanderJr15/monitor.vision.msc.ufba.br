@@ -400,7 +400,10 @@ start_http_server(8000)
 
 stream = Stream("my_camera", size=(640, 480), quality=50, fps=1)
 
-server = MjpegServer("localhost", 8080)
+# server = MjpegServer("localhost", 8080)
+# server = MjpegServer("localhost", 8080)
+server = MjpegServer(MQTT_HOST, 8080)
+
 server.add_stream(stream)
 server.start()
 
