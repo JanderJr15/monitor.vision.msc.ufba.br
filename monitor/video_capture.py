@@ -13,6 +13,7 @@ start_mjpg_streamer()
 time.sleep(5)
 
 # URL do stream
+
 # stream_url = "http://100.94.101.86:8080/?action=stream"
 stream_url = "http://localhost:8080/?action=stream"
 
@@ -59,10 +60,10 @@ def capture_frames_from_stream(url: str):
         url (str): URL do stream.
 
     Yields:
-        np.ndarray: Quadros capturados como arrays NumPy.
+        np.ndarray: Captured Frames as NumPy arrays.
     """
-    cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
-    # cap = cv2.VideoCapture(0)
+    # cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
+    cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
         print(f"Erro ao abrir o stream: {url}")
@@ -87,6 +88,7 @@ metrics_thread.start()
 for frame in capture_frames_from_stream(stream_url):
     start_time = time.time()  # Início da medição do tempo
     resized_frame = cv2.resize(frame, (640, 360))  # Ajuste para a resolução desejada
+
     # Mostrar o stream em tempo real (opcional para debug)
     # cv2.imshow("Stream", frame)
     # cv2.imshow(stream.name, frame)
@@ -103,7 +105,8 @@ for frame in capture_frames_from_stream(stream_url):
         "space": "SALA",
         "message": {"status": [{"code": "stream", "value": "real-time"}]},
         "sensorType": "camera",
-        "timeStamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        "timeStamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "machine":"Test Script"
     }
     message = image_processor.build_message(request, state)
     dado_json = json.dumps(message)

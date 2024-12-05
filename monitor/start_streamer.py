@@ -2,7 +2,7 @@ import subprocess
 
 DEVICE = '/dev/video0'
 IMG_SIZE = '720x360'
-FRAMES = '30'
+FRAMES = '1'
 PORT = '8080'
 
 def start_mjpg_streamer():
