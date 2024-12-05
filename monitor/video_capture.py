@@ -9,18 +9,16 @@ from vision.components.vision import image_processing
 from mjpeg_streamer import MjpegServer, Stream
 from start_streamer import start_mjpg_streamer
 
-
 start_mjpg_streamer()
 time.sleep(5)
 
-print('OK')
 # URL do stream
 # stream_url = "http://100.94.101.86:8080/?action=stream"
 stream_url = "http://localhost:8080/?action=stream"
 
 # Criando métricas do Prometheus
-cpu_usage = Gauge("script_cpu_usage_percent", "CPU usage of the script in percent")
 memory_usage = Gauge("script_memory_usage_mb", "Memory usage of the script in MB")
+cpu_usage = Gauge("script_cpu_usage_percent", "CPU usage of the script in percent")
 mqtt_publish_count = Gauge("mqtt_publish_count", "Number of MQTT messages published")
 frame_processing_time = Gauge("frame_processing_time", "Time taken to process each frame in seconds")
 
