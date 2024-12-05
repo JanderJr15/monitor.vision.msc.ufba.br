@@ -7,7 +7,13 @@ from prometheus_client import start_http_server, Gauge
 import paho.mqtt.publish as publish
 from vision.components.vision import image_processing
 from mjpeg_streamer import MjpegServer, Stream
+from start_streamer import start_mjpg_streamer
 
+
+start_mjpg_streamer()
+time.sleep(5)
+
+print('OK')
 # URL do stream
 # stream_url = "http://100.94.101.86:8080/?action=stream"
 stream_url = "http://localhost:8080/?action=stream"
@@ -18,22 +24,19 @@ memory_usage = Gauge("script_memory_usage_mb", "Memory usage of the script in MB
 mqtt_publish_count = Gauge("mqtt_publish_count", "Number of MQTT messages published")
 frame_processing_time = Gauge("frame_processing_time", "Time taken to process each frame in seconds")
 
-# global MSG_ANTERIOR, publish_count
+# Global variable
+publish_count = 0  # Count published messages
+MSG_ANTERIOR = None  # Last Message published on MQTT
 
-
-# Variáveis globais
-publish_count = 0  # Contador para mensagens publicadas
-MSG_ANTERIOR = None  # Última mensagem publicada no MQTT
-
-# Inicializa o processador de imagem
+# Start Image processor
 image_processor = image_processing.ImageProcessing()
 
-# Configuração MQTT
+# MQTT Configuration
 MQTT_HOST = "localhost"
 MQTT_PORT = 1884
 MQTT_TOPIC = "env1234541/devices"
 
-# Iniciar o servidor Prometheus na porta 8000
+# Start Prometheus Server on 8000 port
 start_http_server(8000)
 
 stream = Stream("my_camera", size=(640, 480), quality=50, fps=1)

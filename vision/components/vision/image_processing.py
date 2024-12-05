@@ -1,5 +1,6 @@
 """This module provides the ImageProcessing class, which integrates functionalities
 for detecting persons, weapons, and recognizing faces within images."""
+import os
 import urllib
 import re
 from typing import Optional, Any
@@ -37,7 +38,7 @@ class ImageProcessing:
             Initializes the ImageProcessing class by loading configuration settings from a YAML file
             and initializing detection models.
         """
-        with open('vision/components/config.yaml', 'r', encoding="utf-8") as f:
+        with open('../vision/components/config.yaml', 'r', encoding="utf-8") as f:
             config = yaml.load(f, Loader=yaml.SafeLoader)
 
         self.person_detector = PersonDetector(config['PERSON_DETECTION_MODEL'])

@@ -1,10 +1,10 @@
-#PERSON_DETECTION_MODEL:   vision/models/yolov9c.pt
-#PERSON_DETECTION_MODEL:   vision/models/yolov8n.pt
-PERSON_DETECTION_MODEL:   vision/models/yolov8s.pt
-#PERSON_DETECTION_MODEL:   vision/models/yolov8n_float16.tflite
+#PERSON_DETECTION_MODEL:   ../vision/models/yolov9c.pt
+#PERSON_DETECTION_MODEL:   ../vision/models/yolov8n.pt
+PERSON_DETECTION_MODEL:   ../vision/models/yolov8s.pt
+#PERSON_DETECTION_MODEL:   ../vision/models/yolov8n_float16.tflite
 
-WEAPON_DETECTION_MODEL:   vision/models/weapon_detector.pt
-POSE_ESTIMATION_MODEL:    vision/models/yolov8m-pose.pt
+WEAPON_DETECTION_MODEL:   ../vision/models/weapon_detector.pt
+POSE_ESTIMATION_MODEL:    ../vision/models/yolov8m-pose.pt
 
-FACE_RECOGNITION_IMAGES:  vision/id_db/images
-FACE_RECOGNITION_CROPS:   vision/id_db/crops
+FACE_RECOGNITION_IMAGES:  ../vision/id_db/images
+FACE_RECOGNITION_CROPS:   ../vision/id_db/crops
