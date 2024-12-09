@@ -25,6 +25,8 @@ tf-keras = "^2.16.0"
 ipykernel = "^6.29.4"
 types-pyyaml = "^6.0.12.20240311"
 mjpeg-streamer = "^2024.2.8"
+psutil = "^6.1.0"
+prometheus-client = "^0.21.1"
 
 [tool.poetry.dependencies.tensorflow-io-gcs-filesystem]
 version = "0.31.0"

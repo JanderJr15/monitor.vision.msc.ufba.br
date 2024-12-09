@@ -9,6 +9,8 @@ from vision.components.vision import image_processing
 from mjpeg_streamer import MjpegServer, Stream
 from start_streamer import start_mjpg_streamer
 
+from task_monitor import TaskMetrics
+
 start_mjpg_streamer()
 time.sleep(5)
 
@@ -44,6 +46,9 @@ server = MjpegServer("localhost", 8080)
 server.add_stream(stream)
 server.start()
 
+from task_monitor import TaskMetrics
+
+# teste = TaskMetrics.collect_metrics()
 def collect_metrics():
     """Coleta métricas do sistema periodicamente."""
     while True:
@@ -62,8 +67,9 @@ def capture_frames_from_stream(url: str):
     Yields:
         np.ndarray: Captured Frames as NumPy arrays.
     """
-    # cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)  # Força FFMPEG para leitura
+    # cap = cv2.VideoCapture(0)
+    # TaskMetrics.collect_metrics(self)
 
     if not cap.isOpened():
         print(f"Erro ao abrir o stream: {url}")
@@ -71,7 +77,6 @@ def capture_frames_from_stream(url: str):
 
     while True:
         ret, frame = cap.read()
-        # _, frame = cap.read()
 
         if not ret:
             print("Erro ao capturar quadro do stream.")

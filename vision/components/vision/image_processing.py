@@ -16,6 +16,10 @@ from vision.components.vision.person_detection import PersonDetector
 from vision.components.vision.weapon_detection import WeaponDetector
 from vision.components.vision.face_recognition import FaceRecognition
 
+from monitor.task_monitor import TaskMetrics
+
+
+
 
 class ImageProcessing:
     """
@@ -56,9 +60,13 @@ class ImageProcessing:
             Returns:
                 dict: A dictionary containing the detection results.
         """
+
         new_state = {'n_detected_people': self.person_detector.count(img),
                      'recognized_people': self.face_recognition(img),
                      'weapon_detected': self.weapon_detector.alert(img)}
+
+        monitor_url = "http://localhost:9091"
+        # TaskMetrics.collect_metrics(process, monitor_url)
 
         return new_state
 
