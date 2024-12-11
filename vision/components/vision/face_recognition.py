@@ -56,18 +56,21 @@ class FaceRecognition:
             list: A sorted list of names of recognized individuals.
         """
         names = []
-        faces = RetinaFace.extract_faces(img)
+        try:
+            faces = RetinaFace.extract_faces(img)
 
-        for face in faces:
-            face = face[:, :, ::-1]  # Convert BGR to RGB
+            for face in faces:
+                face = face[:, :, ::-1]  # Convert BGR to RGB
 
-            result = DeepFace.find(face, self.crops_path,
-                                   enforce_detection=False,
-                                   silent=True,
-                                   align=False)[0]
-            if not result.empty:
-                name = result.iloc[0]['identity'].split(sep='/')[-1].split(sep='.')[0]
-                names.append(name)
+                result = DeepFace.find(face, self.crops_path,
+                                       enforce_detection=False,
+                                       silent=True,
+                                       align=False)[0]
+                if not result.empty:
+                    name = result.iloc[0]['identity'].split(sep='/')[-1].split(sep='.')[0]
+                    names.append(name)
+        except:
+            print("Erro aqui!!")
 
         return sorted(names)
 

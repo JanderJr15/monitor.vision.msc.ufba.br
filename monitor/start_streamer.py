@@ -2,16 +2,14 @@ import subprocess
 
 DEVICE = '/dev/video0'
 IMG_SIZE = '720x360'
-FRAMES = '1'
+FRAMES = '30'
 PORT = '8080'
 
-
-# mjpg-streamer -i "input_uvc.so -d /dev/video0 -r 720x360 -f 1" -o "output_http.so -p 8080 -w /usr/share/mjpg-streamer/www"
 def start_mjpg_streamer():
     try:
         command = (
-            'mjpg_streamer '
-            f'-i "input_uvc.so -d {DEVICE} -r {IMG_SIZE} -f {FRAMES}" '
+            'mjpg-streamer '
+            f'-i "input_uvc.so -d {DEVICE} -r {IMG_SIZE} -f {FRAMES} -n" '
             f'-o "output_http.so -p {PORT} -w /usr/share/mjpg-streamer/www"'
         )
         print("Starting o MJPG-Streamer...")
@@ -24,6 +22,5 @@ def start_mjpg_streamer():
     except Exception as e:
         print(f"Unexpected Error: {e}")
 
-# start_mjpg_streamer()
 # if __name__ == "__main__":
 #     start_mjpg_streamer()
