@@ -42,7 +42,7 @@ class ImageProcessing:
             Initializes the ImageProcessing class by loading configuration settings from a YAML file
             and initializing detection models.
         """
-        with open('../vision/components/config.yaml', 'r', encoding="utf-8") as f:
+        with open(f'../vision/components/config.yaml', 'r', encoding="utf-8") as f:
             config = yaml.load(f, Loader=yaml.SafeLoader)
 
         self.person_detector = PersonDetector(config['PERSON_DETECTION_MODEL'])

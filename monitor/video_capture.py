@@ -1,29 +1,24 @@
 import cv2
 import json
 import time
-import psutil
-import threading
+# import psutil
+# import threading
 from prometheus_client import start_http_server, Gauge
 import paho.mqtt.publish as publish
 from vision.components.vision import image_processing
 from mjpeg_streamer import MjpegServer, Stream
 from start_streamer import start_mjpg_streamer
-
+from monitor import get_ip_address, get_screen
 from task_monitor import TaskMetrics
 
+IP_ADDRESS = get_ip_address.get_local_ip()
 start_mjpg_streamer()
 time.sleep(5)
 
 # URL do stream
 
 # stream_url = "http://100.94.101.86:8080/?action=stream"
-stream_url = "http://localhost:8080/?action=stream"
-
-# Criando métricas do Prometheus
-memory_usage = Gauge("script_memory_usage_mb", "Memory usage of the script in MB")
-cpu_usage = Gauge("script_cpu_usage_percent", "CPU usage of the script in percent")
-mqtt_publish_count = Gauge("mqtt_publish_count", "Number of MQTT messages published")
-frame_processing_time = Gauge("frame_processing_time", "Time taken to process each frame in seconds")
+stream_url = f"http://{IP_ADDRESS}:8080/?action=stream"
 
 # Global variable
 publish_count = 0  # Count published messages
@@ -46,16 +41,15 @@ server = MjpegServer("localhost", 8080)
 server.add_stream(stream)
 server.start()
 
-from task_monitor import TaskMetrics
 
 # teste = TaskMetrics.collect_metrics()
-def collect_metrics():
-    """Coleta métricas do sistema periodicamente."""
-    while True:
-        process = psutil.Process()
-        cpu_usage.set(process.cpu_percent(interval=1))
-        memory_usage.set(process.memory_info().rss / (1024 * 1024))  # Memória em MB
-        time.sleep(1)  # Coleta de métricas a cada segundo
+# def collect_metrics():
+#     """Coleta métricas do sistema periodicamente."""
+#     while True:
+#         process = psutil.Process()
+#         cpu_usage.set(process.cpu_percent(interval=1))
+#         memory_usage.set(process.memory_info().rss / (1024 * 1024))  # Memória em MB
+#         time.sleep(1)  # Coleta de métricas a cada segundo
 
 def capture_frames_from_stream(url: str):
     """
@@ -78,6 +72,13 @@ def capture_frames_from_stream(url: str):
     while True:
         ret, frame = cap.read()
 
+        # Condição que tira uma foto e envia pra mobile processar
+        if mobile:
+            get_screen.capture_image(frame)
+            cv2.imwrite('./teste.png', frame)
+            mobile = False
+            print("ok")
+
         if not ret:
             print("Erro ao capturar quadro do stream.")
             break
@@ -86,8 +87,8 @@ def capture_frames_from_stream(url: str):
     cap.release()
 
 # Inicia a coleta de métricas do sistema em uma thread separada
-metrics_thread = threading.Thread(target=collect_metrics, daemon=True)
-metrics_thread.start()
+# metrics_thread = threading.Thread(target=collect_metrics, daemon=True)
+# metrics_thread.start()
 
 # Processamento de quadros
 for frame in capture_frames_from_stream(stream_url):
@@ -111,7 +112,7 @@ for frame in capture_frames_from_stream(stream_url):
         "message": {"status": [{"code": "stream", "value": "real-time"}]},
         "sensorType": "camera",
         "timeStamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "machine":"Test Script"
+        "machine": f"{IP_ADDRESS}"
     }
     message = image_processor.build_message(request, state)
     dado_json = json.dumps(message)
@@ -123,14 +124,14 @@ for frame in capture_frames_from_stream(stream_url):
             MSG_ANTERIOR = dado_json
             publish.single(MQTT_TOPIC, dado_json, hostname=MQTT_HOST, port=MQTT_PORT)
             publish_count += 1  # Incrementa o contador de publicações
-            mqtt_publish_count.set(publish_count)  # Atualiza métrica no Prometheus
+            # mqtt_publish_count.set(publish_count)  # Atualiza métrica no Prometheus
             print("Mensagem publicada com sucesso:", dado_json)
     except Exception as e:
         print(f"Erro ao publicar no MQTT: {e}")
 
     # Tempo de execução do ciclo
     cycle_time = time.time() - start_time
-    frame_processing_time.set(cycle_time)  # Atualiza métrica do Prometheus
+    # frame_processing_time.set(cycle_time)  # Atualiza métrica do Prometheus
     print(f"Tempo de processamento do frame: {cycle_time:.4f} segundos")
 
     # Finaliza se pressionar 'q'

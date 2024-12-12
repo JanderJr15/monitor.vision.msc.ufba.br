@@ -2,13 +2,13 @@ import subprocess
 
 DEVICE = '/dev/video0'
 IMG_SIZE = '720x360'
-FRAMES = '30'
+FRAMES = '1'
 PORT = '8080'
 
 def start_mjpg_streamer():
     try:
         command = (
-            'mjpg-streamer '
+            'mjpg_streamer '
             f'-i "input_uvc.so -d {DEVICE} -r {IMG_SIZE} -f {FRAMES} -n" '
             f'-o "output_http.so -p {PORT} -w /usr/share/mjpg-streamer/www"'
         )
