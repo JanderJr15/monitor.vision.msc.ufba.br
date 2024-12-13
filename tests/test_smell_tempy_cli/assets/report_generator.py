@@ -21,7 +21,7 @@ class ReportGenerator:
 	}
 	table {
 		border-collapse: collapse;
-		width: 100%;
+		WIDTH: 100%;
 	}
 	td {
 		text-align: center;
@@ -56,10 +56,10 @@ class ReportGenerator:
 		if (qtd_ts > 0):
 			self.content +='''\n<table>
 	<thead>
-		<th style="width: 3%">#</th>
-		<th style="width: 19%">Test Smell</th>
-		<th style="width: 58%">Method</th>
-		<th style="width: 20%">Lines</th>
+		<th style="WIDTH: 3%">#</th>
+		<th style="WIDTH: 19%">Test Smell</th>
+		<th style="WIDTH: 58%">Method</th>
+		<th style="WIDTH: 20%">Lines</th>
 	</thead>\n'''
 
 		else:

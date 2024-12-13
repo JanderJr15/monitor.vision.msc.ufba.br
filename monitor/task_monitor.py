@@ -1,83 +1,70 @@
+import os
 import psutil
-from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+import json
+import threading
+import time
+import paho.mqtt.client as mqtt
+
+
+MQTT_HOST = "localhost"
+MQTT_PORT = 1884
+MQTT_TOPIC = "env1234541/monitor/vision"
 
 
 class TaskMetrics:
-    def __init__(self, task_name, monitor_url):
+    def __init__(self, task_name=None, mqtt_host=MQTT_HOST, mqtt_port=MQTT_PORT, mqtt_topic=MQTT_TOPIC, interval=5):
         """
-        Inicializa o módulo de métricas.
+        Inicializa a instância do Monitor.
 
-        :param task_name: Nome ou identificação da tarefa
-        :param monitor_url: URL do módulo monitor (Prometheus Pushgateway)
+        :param task_name: nome da aplicação ou script a ser monitorado.
+        :param mqtt_host: nome do host do broker MQTT.
+        :param mqtt_port: porta do broker MQTT.
+        :param mqtt_topic: tópico MQTT para publicação de métricas.
+        :param interval: Intervalo de monitoramento em segundos.
         """
-        self.cpu_usage1 = Gauge("script_cpu_usage_percent", "CPU usage of the script in percent")
+        self.task_name = task_name or os.path.basename(__file__)
+        self.mqtt_host = mqtt_host
+        self.mqtt_port = mqtt_port
+        self.mqtt_topic = mqtt_topic
+        self.interval = interval
+        self.mqtt_client = mqtt.Client()
+        self.process = psutil.Process(os.getpid())  # Monitor the current process
+        self.running = False
 
-        self.task_name = task_name
-        self.monitor_url = monitor_url
-        self.registry = CollectorRegistry()
-        self.cpu_gauge = Gauge(
-            f'{task_name}_cpu_usage',
-            'CPU usage of the task in percentage',
-            registry=self.registry
-        )
-        self.memory_gauge = Gauge(
-            f'{task_name}_memory_usage',
-            'Memory usage of the task in bytes',
-            registry=self.registry
-        )
-
-    def collect_metrics(self):
-        """
-        Coleta as métricas de CPU e memória da tarefa.
-        """
+    def connect_mqtt(self):
+        """Connect on MQTT broker."""
         try:
-
-            # Coleta informações do processo pela identificação do nome
-            for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_info']):
-                print(proc)
-                if self.task_name in proc.info['name']:
-                    cpu_usage = proc.info['cpu_percent']
-                    memory_usage = proc.info['memory_info'].rss  # RSS (Resident Set Size)
-                    # cpu_usage1 = proc.cpu_percent(interval=1)
-                    print(cpu_usage, memory_usage)
-                    # Atualiza os valores das métricas
-                    # self.cpu_usage1.set(process.cpu_percent(interval=1))
-                    self.cpu_gauge.set(cpu_usage)
-                    self.memory_gauge.set(memory_usage)
-                    return cpu_usage, memory_usage
+            self.mqtt_client.connect(self.mqtt_host, self.mqtt_port)
+            print(f"Conectado ao broker MQTT em {self.mqtt_host}:{self.mqtt_port}")
         except Exception as e:
-            print(f"Erro ao coletar métricas: {e}")
-        return None, None
+            print(f"Falhou ao se conectar ao broker: {e}")
 
-    def push_metrics(self):
-        """
-        Envia as métricas coletadas para o módulo monitor.
-        """
-        try:
-            push_to_gateway(self.monitor_url, job=self.task_name, registry=self.registry)
-            print(f"Métricas enviadas com sucesso para {self.monitor_url}.")
-        except Exception as e:
-            print(f"Erro ao enviar métricas: {e}")
+    def collect_and_publish_metrics(self):
+        """Coleta e publica metricas do processo atual."""
+        while self.running:
+            try:
+                cpu_usage = self.process.cpu_percent(interval=1)
+                memory_usage = self.process.memory_info().rss
+                message = {
+                    "task_name": self.task_name,
+                    "pid": self.process.pid,
+                    "cpu_usage": cpu_usage,
+                    "memory_usage": memory_usage
+                }
+                self.mqtt_client.publish(self.mqtt_topic, json.dumps(message))
 
+                print(f"Metricas publicadas para {self.mqtt_topic}: {message}")
+            except Exception as e:
+                print(f"Erro ao coletar as metricas: {e}")
+            time.sleep(self.interval)
 
-# Exemplo de uso
-if __name__ == "__main__":
-    # Nome da tarefa (por exemplo, "Task 1") e URL do monitor (Prometheus Pushgateway)
-    task_name = "mjpg_streamer"
-    tasks = ["mjpg_streamer", "kworker/u17:3-uvcvideo", "python"]
-    monitor_url = "http://localhost:9091"
+    def start(self):
+        """Comeca a monitorar o processo atual."""
+        self.running = True
+        self.connect_mqtt()
+        monitor_thread = threading.Thread(target=self.collect_and_publish_metrics, daemon=True)
+        monitor_thread.start()
 
-    # Instância do monitor de métricas
-    task_metrics = TaskMetrics(task_name, monitor_url)
-
-    # Coleta e envia métricas em loop (simulando monitoramento contínuo)
-    import time
-
-    while True:
-        cpu, memory = task_metrics.collect_metrics()
-        if cpu is not None:
-            print(f"CPU: {cpu}%, Memória: {memory} bytes")
-            task_metrics.push_metrics()
-        else:
-            print("Tarefa não encontrada.")
-        time.sleep(5)  # Intervalo entre as coletas
+    def stop(self):
+        """Para monitoramento."""
+        self.running = False

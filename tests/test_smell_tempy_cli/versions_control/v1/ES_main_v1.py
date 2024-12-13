@@ -328,7 +328,7 @@ AQUI É ONDE VOCE SETA O DIRETORIO ONDE VAI ENCONTRAR OS ARQUIVOS DE TESTE. WIND
 b2 = tk.Button(master = root, text = 'Search for test classes in a local project', width = 50, command=select_directory)
 b2.pack(side=tk.BOTTOM, padx = 2, pady=2)
 
-# b3 = tk.Button(master = root, text = 'Analyze project from GitHub', width = 50, command=set_github_url)
+# b3 = tk.Button(master = root, text = 'Analyze project from GitHub', WIDTH = 50, command=set_github_url)
 # b3.pack(side=tk.BOTTOM, padx = 2, pady=2)
 
 tk.mainloop()

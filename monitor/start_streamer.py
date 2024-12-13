@@ -13,14 +13,12 @@ def start_mjpg_streamer():
             f'-o "output_http.so -p {PORT} -w /usr/share/mjpg-streamer/www"'
         )
         print("Starting o MJPG-Streamer...")
-        # subprocess.run(command, shell=True, check=True)
         subprocess.Popen(command, shell=True)
 
-        print("MJPG-Streamer closed.")
     except subprocess.CalledProcessError as e:
         print(f"Error executing command: {e}")
     except Exception as e:
         print(f"Unexpected Error: {e}")
 
-# if __name__ == "__main__":
-#     start_mjpg_streamer()
+if __name__ == "__main__":
+    start_mjpg_streamer()
