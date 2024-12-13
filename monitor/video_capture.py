@@ -1,14 +1,12 @@
+from vision.components.vision import image_processing
+from monitor.get_ip_address import NetworkUtils
+from mjpeg_streamer import MjpegServer, Stream
+from start_streamer import start_mjpg_streamer
+from task_monitor import TaskMetrics
+import paho.mqtt.publish as publish
 import cv2
 import json
 import time
-import os
-from prometheus_client import start_http_server, Gauge
-import paho.mqtt.publish as publish
-from vision.components.vision import image_processing
-from mjpeg_streamer import MjpegServer, Stream
-from start_streamer import start_mjpg_streamer
-from monitor.get_ip_address import NetworkUtils
-from task_monitor import TaskMetrics
 # from dotenv import load_dotenv
 
 # load_dotenv()
@@ -36,9 +34,6 @@ LENGTH = 480
 FPS = 1
 # Start Image processor
 image_processor = image_processing.ImageProcessing()
-
-# Start Prometheus Server on 8000 port
-# start_http_server(8000)
 
 stream = Stream(f"Camera_001-ip-{IP_ADDRESS}", size=(WIDTH, LENGTH), quality=50, fps=FPS)
 server = MjpegServer("localhost", 8080)
@@ -76,9 +71,6 @@ def capture_frames_from_stream(url: str):
 for frame in capture_frames_from_stream(stream_url):
     start_time = time.time()  # Início da medição do tempo
     resized_frame = cv2.resize(frame, (WIDTH, LENGTH))  # Ajuste para a resolução desejada
-
-    # Mostrar o stream em tempo real (opcional para debug)
-    # cv2.imshow(stream.name, frame)
 
     state = image_processor.process(frame)
 
